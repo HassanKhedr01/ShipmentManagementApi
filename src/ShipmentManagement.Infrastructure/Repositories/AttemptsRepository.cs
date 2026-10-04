@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShipmentManagement.Domain.Entities;
-using ShipmentManagement.Domain.Interfaces;
-using ShipmentManagement.Infrastructure.Data;
+using ShipmentManagement.Domain.Repositories;
+using ShipmentManagement.Infrastructure.Persistence;
 
 namespace ShipmentManagement.Infrastructure.Repositories;
 

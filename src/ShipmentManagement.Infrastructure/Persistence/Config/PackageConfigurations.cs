@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ShipmentManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ShipmentManagement.Infrastructure.Data.Config;
+using ShipmentManagement.Domain.Entities;
+
+namespace ShipmentManagement.Infrastructure.Persistence.Config;
 
 public class PackageConfigurations : IEntityTypeConfiguration<Package>
 {

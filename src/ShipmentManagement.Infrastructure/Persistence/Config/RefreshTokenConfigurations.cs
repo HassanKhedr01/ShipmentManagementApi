@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using ShipmentManagement.Domain.Entities;
 
-namespace ShipmentManagement.Infrastructure.Data.Config;
+namespace ShipmentManagement.Infrastructure.Persistence.Config;
 
 public class RefreshTokenConfigurations : IEntityTypeConfiguration<RefreshToken>
 {

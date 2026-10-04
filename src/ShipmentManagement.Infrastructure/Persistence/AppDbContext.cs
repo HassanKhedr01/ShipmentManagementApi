@@ -1,10 +1,12 @@
 using System.Reflection;
+
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+
 using ShipmentManagement.Domain.Entities;
 using ShipmentManagement.Infrastructure.Identity;
 
-namespace ShipmentManagement.Infrastructure.Data;
+namespace ShipmentManagement.Infrastructure.Persistence;
 
 public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {

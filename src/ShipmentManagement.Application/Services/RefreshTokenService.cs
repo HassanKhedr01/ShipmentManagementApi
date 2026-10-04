@@ -1,10 +1,11 @@
 using System.Security.Cryptography;
 using System.Text;
+
 using ShipmentManagement.Application.Interfaces;
 using ShipmentManagement.Domain.Entities;
-using ShipmentManagement.Domain.Interfaces;
+using ShipmentManagement.Domain.Repositories;
 
-namespace ShipmentManagement.Infrastructure.Services;
+namespace ShipmentManagement.Application.Services;
 
 public class RefreshTokenService : IRefreshTokenService
 {

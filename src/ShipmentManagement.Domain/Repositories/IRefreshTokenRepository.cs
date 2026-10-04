@@ -1,6 +1,6 @@
 using ShipmentManagement.Domain.Entities;
 
-namespace ShipmentManagement.Domain.Interfaces;
+namespace ShipmentManagement.Domain.Repositories;
 
 public interface IRefreshTokenRepository
 {

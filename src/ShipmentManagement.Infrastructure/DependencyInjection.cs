@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
-using ShipmentManagement.Domain.Interfaces;
-using ShipmentManagement.Infrastructure.Data;
 using Microsoft.Extensions.DependencyInjection;
 using ShipmentManagement.Application.Interfaces;
 using ShipmentManagement.Infrastructure.Identity;
 using ShipmentManagement.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+using ShipmentManagement.Domain.Repositories;
+using ShipmentManagement.Infrastructure.Persistence;
 using ShipmentManagement.Infrastructure.Repositories;
 
 namespace ShipmentManagement.Infrastructure;
@@ -58,10 +59,6 @@ public static class DependencyInjection
         services.AddScoped<IAttemptsRepository, AttemptsRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-        services.AddScoped<IPackagesService, PackagesService>();
-        services.AddScoped<IShipmentService, ShipmentService>();
-        services.AddScoped<IFacilitiesService, FacilitiesService>();
-        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
 

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+
 using ShipmentManagement.Application.DTOs.DeliveryAttempts;
 using ShipmentManagement.Application.DTOs.Facilities;
 using ShipmentManagement.Application.DTOs.TrackingEvents;
@@ -6,9 +7,9 @@ using ShipmentManagement.Application.Interfaces;
 using ShipmentManagement.Application.Mappings;
 using ShipmentManagement.Domain.Entities;
 using ShipmentManagement.Domain.Enums;
-using ShipmentManagement.Domain.Interfaces;
+using ShipmentManagement.Domain.Repositories;
 
-namespace ShipmentManagement.Infrastructure.Services;
+namespace ShipmentManagement.Application.Services;
 
 public class ShipmentService : IShipmentService
 {
