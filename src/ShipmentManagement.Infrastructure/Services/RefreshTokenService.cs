@@ -5,7 +5,7 @@ using ShipmentManagement.Application.Interfaces;
 using ShipmentManagement.Domain.Entities;
 using ShipmentManagement.Domain.Repositories;
 
-namespace ShipmentManagement.Application.Services;
+namespace ShipmentManagement.Infrastructure.Services;
 
 public class RefreshTokenService : IRefreshTokenService
 {
