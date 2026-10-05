@@ -13,6 +13,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Microsoft.NET.Test.Sdk"/>
     <PackageReference Include="Moq" />
     <PackageReference Include="xunit"/>
@@ -28,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ShipmentManagement.Application\ShipmentManagement.Application.csproj" />
+    <ProjectReference Include="..\ShipmentManagement.Testing\ShipmentManagement.Testing.csproj" />
   </ItemGroup>
 
 </Project>
