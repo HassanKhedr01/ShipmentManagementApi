@@ -29,6 +29,7 @@ public class Program
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddAuthorization();
+            builder.Services.AddTimeProvider();
 
             var app = builder.Build();
 

@@ -1,6 +1,6 @@
 namespace ShipmentManagement.Testing.Common;
 
-public class AutoMoqDataAttribute
+public class InlineAutoMoqDataAttribute
 {
     
 }

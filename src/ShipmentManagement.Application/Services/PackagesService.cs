@@ -14,15 +14,17 @@ public class PackagesService : IPackagesService
     private const int EstimatedStandardDeliveryDays = 3;
     private const int EstimatedExpressDeliveryDays = 1;
     private readonly ILogger<PackagesService> _logger;
+    private readonly TimeProvider _timeProvider;
     private readonly ICurrentUserService _currentUserService;
     private readonly IPackagesRepository _packagesRepository;
 
     public PackagesService(IPackagesRepository packagesRepository, ICurrentUserService currentUserService,
-        ILogger<PackagesService> logger)
+        ILogger<PackagesService> logger, TimeProvider timeProvider)
     {
         _packagesRepository = packagesRepository;
         _currentUserService = currentUserService;
         _logger = logger;
+        _timeProvider = timeProvider;
     }
 
     public async Task<PackageResult?> GetPackageByIdAsync(int id)
@@ -135,7 +137,8 @@ public class PackagesService : IPackagesService
         var package = createRequest.ToEntity();
 
         package.CurrentStatus = Status.Created;
-        package.EstimatedDeliveryDate = DateTime.UtcNow.AddDays(package.DeliveryType == DeliveryType.Express
+        var currentUtc = _timeProvider.GetUtcNow().UtcDateTime;
+        package.EstimatedDeliveryDate = currentUtc.AddDays(package.DeliveryType == DeliveryType.Express
             ? EstimatedExpressDeliveryDays
             : EstimatedStandardDeliveryDays);
         package.TrackingEvents.Add(new TrackingEvent
@@ -143,7 +146,7 @@ public class PackagesService : IPackagesService
             PackageId = package.Id,
             PackageName = package.Name,
             Status = Status.Created,
-            OccuredAt = DateTime.UtcNow,
+            OccuredAt = currentUtc,
             Description = "New package created",
             Package = package
         });
@@ -178,7 +181,7 @@ public class PackagesService : IPackagesService
             PackageId = package.Id,
             PackageName = package.Name,
             Status = Status.Cancelled,
-            OccuredAt = DateTime.UtcNow,
+            OccuredAt = _timeProvider.GetUtcNow().UtcDateTime,
             Description = "Customer cancelled ordering the package",
             Package = package
         });

@@ -14,6 +14,7 @@ namespace ShipmentManagement.Application.Services;
 public class ShipmentService : IShipmentService
 {
     private readonly ILogger<ShipmentService> _logger;
+    private readonly TimeProvider _timeProvider;
     private readonly ICurrentUserService _currentUserService;
     private readonly ITrackingRepository _trackingRepository;
     private readonly IPackagesRepository _packagesRepository;
@@ -23,10 +24,11 @@ public class ShipmentService : IShipmentService
 
     public ShipmentService(ITrackingRepository trackingRepository, IAttemptsRepository attemptsRepository,
         ICurrentUserService currentUserService, IPackagesService packagesService, IFacilitiesService facilitiesService,
-        ILogger<ShipmentService> logger, IPackagesRepository packagesRepository)
+        ILogger<ShipmentService> logger, IPackagesRepository packagesRepository, TimeProvider timeProvider)
     {
         _logger = logger;
         _packagesRepository = packagesRepository;
+        _timeProvider = timeProvider;
         _trackingRepository = trackingRepository;
         _attemptsRepository = attemptsRepository;
         _currentUserService = currentUserService;
@@ -140,12 +142,13 @@ public class ShipmentService : IShipmentService
             return new RecordEventResult { IsSuccess = false, Message = "Invalid status transition." };
         }
 
+        var currentUtc = _timeProvider.GetUtcNow().UtcDateTime;
         if (newStatus == Status.Delivered)
         {
             var deliveryAttempt = new DeliveryAttempt
             {
                 PackageId = packageId,
-                AttemptedAt = DateTime.UtcNow,
+                AttemptedAt = currentUtc,
                 DeliveryResult = Result.Successful
             };
 
@@ -157,7 +160,7 @@ public class ShipmentService : IShipmentService
             var deliveryAttempt = new DeliveryAttempt
             {
                 PackageId = packageId,
-                AttemptedAt = DateTime.UtcNow,
+                AttemptedAt = currentUtc,
                 DeliveryResult = Result.Failed,
                 FailureReason = createRequest.Description
             };
@@ -171,7 +174,7 @@ public class ShipmentService : IShipmentService
         eventEntity.PackageId = package.Id;
         eventEntity.PackageName = package.Name;
         eventEntity.FacilityName = newStatus != Status.Delivered ? facilityResult?.Name : null;
-        eventEntity.OccuredAt = DateTime.UtcNow;
+        eventEntity.OccuredAt = currentUtc;
 
         var createdEvent = await _trackingRepository.AddAsync(eventEntity);
 

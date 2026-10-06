@@ -10,6 +10,7 @@ namespace ShipmentManagement.Infrastructure.Services;
 
 public class AuthService : IAuthService
 {
+    private readonly TimeProvider _timeProvider;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly IJwtService _jwtService;
@@ -17,10 +18,11 @@ public class AuthService : IAuthService
     private readonly JwtOptions _jwtOptions;
 
     public AuthService(UserManager<ApplicationUser> userManager, IRefreshTokenService refreshTokenService,
-        IJwtService jwtService, IOptions<JwtOptions> jwtOptions, RoleManager<ApplicationRole> roleManager)
+        IJwtService jwtService, IOptions<JwtOptions> jwtOptions, RoleManager<ApplicationRole> roleManager, TimeProvider timeProvider)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _timeProvider = timeProvider;
         _refreshTokenService = refreshTokenService;
         _jwtService = jwtService;
         _jwtOptions = jwtOptions.Value;
@@ -78,7 +80,7 @@ public class AuthService : IAuthService
         {
             ApplicationUserId = user.Id,
             TokenHash = refreshTokenHash,
-            ExpiresAt = DateTime.UtcNow.AddDays(_jwtOptions.RefreshTokenExpirationDays),
+            ExpiresAt = _timeProvider.GetUtcNow().UtcDateTime.AddDays(_jwtOptions.RefreshTokenExpirationDays),
         };
 
         await _refreshTokenService.AddRefreshTokenAsync(refreshTokenEntity);
@@ -112,7 +114,8 @@ public class AuthService : IAuthService
         var tokenHash = _refreshTokenService.HashRefreshToken(dto.RefreshToken);
         var storedToken = await _refreshTokenService.GetRefreshTokenWithUserIdAsync(userId,tokenHash);
 
-        if (storedToken is not { RevokedAt: null } || storedToken.ExpiresAt <= DateTime.UtcNow)
+        var currentUtc = _timeProvider.GetUtcNow().UtcDateTime;
+        if (storedToken is not { RevokedAt: null } || storedToken.ExpiresAt <= currentUtc)
         {
             return null;
         }
@@ -139,7 +142,7 @@ public class AuthService : IAuthService
         {
             ApplicationUserId = user.Id,
             TokenHash = refreshTokenHash,
-            ExpiresAt = DateTime.UtcNow.AddDays(_jwtOptions.RefreshTokenExpirationDays),
+            ExpiresAt = currentUtc.AddDays(_jwtOptions.RefreshTokenExpirationDays),
         };
 
         await _refreshTokenService.AddRefreshTokenAsync(refreshTokenEntity);

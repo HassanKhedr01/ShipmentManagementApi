@@ -73,4 +73,10 @@ public static class DependencyInjection
         });
         return services;
     }
+    
+    public static IServiceCollection AddTimeProvider(this IServiceCollection services)
+    {
+        services.AddSingleton(TimeProvider.System);
+        return services;
+    }
 }
