@@ -365,7 +365,7 @@ public class PackagesServiceTest
         addedPackage.Should().NotBeNull();
         result.CurrentStatus.Should().Be(DTOs.Common.Status.Created);
     }
-    
+
     [Theory, AutoMoqData]
     public async Task CreatePackageAsync_CreatesPackage_AddInitialTrackingEvent(
         CreatePackageRequest createRequest,
@@ -384,17 +384,17 @@ public class PackagesServiceTest
 
         // Act
         await service.CreatePackageAsync(createRequest);
-        
+
         // Assert
         addedPackage.Should().NotBeNull();
         addedPackage.TrackingEvents.Should().ContainSingle();
-        
+
         var addedEvent = addedPackage.TrackingEvents.Single();
         addedEvent.Status.Should().Be(Status.Created);
         addedEvent.PackageId.Should().Be(addedPackage.Id);
         addedEvent.PackageName.Should().Be(addedPackage.Name);
     }
-    
+
     [Theory, AutoMoqData]
     public async Task CreatePackageAsync_StandardPackage_CreatesPackageWithStandardDeliveryType(
         CreatePackageRequest createRequest,
@@ -409,7 +409,7 @@ public class PackagesServiceTest
         fakeTime.SetUtcNow(frozenTime);
         createRequest.DeliveryType = DTOs.Common.DeliveryType.Standard;
         Package? addedPackage = null;
-        
+
         currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
         repoMock.Setup(repo => repo.AddAsync(It.IsAny<Package>()))
             .Callback((Package package) => addedPackage = package)
@@ -417,14 +417,14 @@ public class PackagesServiceTest
 
         // Act
         var result = await service.CreatePackageAsync(createRequest);
-        
+
         // Assert
         result.Should().NotBeNull();
         addedPackage.Should().NotBeNull();
         result.DeliveryType.Should().Be(DTOs.Common.DeliveryType.Standard);
         result.EstimatedDeliveryDate.Should().Be(frozenTime.UtcDateTime.AddDays(3));
     }
-    
+
     [Theory, AutoMoqData]
     public async Task CreatePackageAsync_ExpressPackage_CreatesPackageWithExpressDeliveryType(
         CreatePackageRequest createRequest,
@@ -439,7 +439,7 @@ public class PackagesServiceTest
         fakeTime.SetUtcNow(frozenTime);
         createRequest.DeliveryType = DTOs.Common.DeliveryType.Express;
         Package? addedPackage = null;
-        
+
         currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
         repoMock.Setup(repo => repo.AddAsync(It.IsAny<Package>()))
             .Callback((Package package) => addedPackage = package)
@@ -447,14 +447,14 @@ public class PackagesServiceTest
 
         // Act
         var result = await service.CreatePackageAsync(createRequest);
-        
+
         // Assert
         result.Should().NotBeNull();
         addedPackage.Should().NotBeNull();
         result.DeliveryType.Should().Be(DTOs.Common.DeliveryType.Express);
         result.EstimatedDeliveryDate.Should().Be(frozenTime.UtcDateTime.AddDays(1));
     }
-    
+
     #endregion
 
     #region CancelPackageAsync
@@ -473,7 +473,7 @@ public class PackagesServiceTest
         package.ApplicationUserId = userId;
         package.CurrentStatus = Status.Created;
         Package? cancelledPackage = null;
-        
+
         currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
         repoMock.Setup(repo => repo.GetByIdAsync(userId, packageId)).ReturnsAsync(package);
         repoMock.Setup(repo => repo.UpdateAsync(package))
@@ -488,7 +488,7 @@ public class PackagesServiceTest
         cancelledPackage.Should().NotBeNull();
         cancelledPackage!.CurrentStatus.Should().Be(Status.Cancelled);
     }
-    
+
     [Theory, AutoMoqData]
     public async Task CancelPackageAsync_PackageExistsAndCancellable_CreatesTrackingEvent(
         int packageId,
@@ -503,7 +503,7 @@ public class PackagesServiceTest
         package.ApplicationUserId = userId;
         package.CurrentStatus = Status.Created;
         Package? cancelledPackage = null;
-        
+
         currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
         repoMock.Setup(repo => repo.GetByIdAsync(userId, packageId)).ReturnsAsync(package);
         repoMock.Setup(repo => repo.UpdateAsync(package))
@@ -521,7 +521,7 @@ public class PackagesServiceTest
         trackingEvent.PackageId.Should().Be(cancelledPackage.Id);
         trackingEvent.PackageName.Should().Be(cancelledPackage.Name);
     }
-    
+
     [Theory, AutoMoqData]
     public async Task CancelPackageAsync_PackageDoesNotExist_ReturnsFalse(
         int packageId,
@@ -531,7 +531,7 @@ public class PackagesServiceTest
     {
         // Arrange
         Guid userId = Guid.NewGuid();
-        
+
         currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
         repoMock.Setup(repo => repo.GetByIdAsync(userId, packageId)).ReturnsAsync((Package?)null);
 
@@ -541,11 +541,19 @@ public class PackagesServiceTest
         // Assert
         Assert.False(result);
     }
-    
-    [Theory, AutoMoqData]
+
+    [Theory]
+    [InlineAutoMoqData(Status.PickedUp)]
+    [InlineAutoMoqData(Status.InTransit)]
+    [InlineAutoMoqData(Status.ArrivedAtFacility)]
+    [InlineAutoMoqData(Status.OutForDelivery)]
+    [InlineAutoMoqData(Status.Delayed)]
+    [InlineAutoMoqData(Status.Delivered)]
+    [InlineAutoMoqData(Status.Cancelled)]
     public async Task CancelPackageAsync_PackageExistsAndNotCancellable_ReturnsFalse(
         int packageId,
         Package package,
+        Status currentStatus,
         [Frozen] Mock<IPackagesRepository> repoMock,
         [Frozen] Mock<ICurrentUserService> currentUserServiceMock,
         PackagesService service)
@@ -554,8 +562,8 @@ public class PackagesServiceTest
         Guid userId = Guid.NewGuid();
         package.Id = packageId;
         package.ApplicationUserId = userId;
-        package.CurrentStatus = Status.PickedUp; // Not cancellable
-        
+        package.CurrentStatus = currentStatus; // Not cancellable
+
         currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
         repoMock.Setup(repo => repo.GetByIdAsync(userId, packageId)).ReturnsAsync(package);
         repoMock.Setup(repo => repo.UpdateAsync(package)).ReturnsAsync(true);
@@ -566,6 +574,6 @@ public class PackagesServiceTest
         // Assert
         Assert.False(result);
     }
-    
+
     #endregion
 }

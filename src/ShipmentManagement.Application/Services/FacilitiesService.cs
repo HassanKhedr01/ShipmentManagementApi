@@ -75,6 +75,7 @@ public class FacilitiesService : IFacilitiesService
         if (!updated)
         {
             _logger.LogWarning("Failed to update facility with ID {FacilityId}.", id);
+            return false;
         }
 
         _logger.LogInformation("Facility with ID {FacilityId} updated successfully.", id);
@@ -98,6 +99,7 @@ public class FacilitiesService : IFacilitiesService
         if (!activated)
         {
             _logger.LogWarning("Failed to activate facility with ID {FacilityId}.", dto.Id);
+            return false;
         }
 
         _logger.LogInformation("Facility with ID {FacilityId} activated successfully.", dto.Id);
@@ -116,6 +118,7 @@ public class FacilitiesService : IFacilitiesService
         if (!deactivated)
         {
             _logger.LogWarning("Failed to deactivate facility with ID {FacilityId}.", dto.Id);
+            return false;
         }
 
         _logger.LogInformation("Facility with ID {FacilityId} deactivated successfully.", dto.Id);
