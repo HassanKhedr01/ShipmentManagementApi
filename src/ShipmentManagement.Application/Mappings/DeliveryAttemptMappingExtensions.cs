@@ -12,7 +12,7 @@ public static class DeliveryAttemptMappingExtensions
             Id = deliveryAttempt.Id,
             PackageId = deliveryAttempt.PackageId,
             AttemptedAt = deliveryAttempt.AttemptedAt,
-            DeliveryResult = deliveryAttempt.DeliveryResult.ToString(),
+            DeliveryResult = deliveryAttempt.DeliveryResult.ToDto(),
             FailureReason = deliveryAttempt.FailureReason
         };
     }
