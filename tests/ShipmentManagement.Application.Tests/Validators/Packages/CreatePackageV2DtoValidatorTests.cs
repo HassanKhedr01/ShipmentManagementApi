@@ -1,0 +1,216 @@
+using FluentValidation.TestHelper;
+
+using ShipmentManagement.Application.DTOs.Common;
+using ShipmentManagement.Application.DTOs.Packages;
+using ShipmentManagement.Application.Validators.Common;
+using ShipmentManagement.Application.Validators.Packages;
+
+namespace ShipmentManagement.Application.Tests.Validators.Packages;
+
+public class CreatePackageV2DtoValidatorTests
+{
+    private readonly CreatePackageV2DtoValidator _validator;
+
+    public CreatePackageV2DtoValidatorTests()
+    {
+        var addressValidator = new AddressDtoValidator();
+        _validator = new CreatePackageV2DtoValidator(addressValidator);
+    }
+
+    #region Name
+
+    [Fact]
+    public void Name_InvalidName_ShouldHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto { Name = "" };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Name)
+            .WithErrorMessage("Package name is required.");
+    }
+
+    [Fact]
+    public void Name_ValidName_ShouldNotHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto { Name = "Valid Package Name" };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.Name);
+    }
+
+    #endregion
+
+    #region SenderName
+
+    [Fact]
+    public void SenderName_InvalidSenderName_ShouldHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto { SenderName = "" };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.SenderName)
+            .WithErrorMessage("Sender name is required.");
+    }
+
+    [Fact]
+    public void SenderName_ValidSenderName_ShouldNotHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto { SenderName = "Valid Sender Name" };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.SenderName);
+    }
+
+    #endregion
+
+    #region RecipientName
+
+    [Fact]
+    public void RecipientName_InvalidRecipientName_ShouldHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto { RecipientName = "" };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.RecipientName)
+            .WithErrorMessage("Recipient name is required.");
+    }
+
+    [Fact]
+    public void RecipientName_ValidRecipientName_ShouldNotHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto { RecipientName = "Valid Recipient Name" };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.RecipientName);
+    }
+
+    #endregion
+
+    #region OriginAddress
+
+    [Fact]
+    public void OriginAddress_InvalidOriginAddress_ShouldHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto { OriginAddress = new AddressDto() };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.OriginAddress.City);
+        result.ShouldHaveValidationErrorFor(x => x.OriginAddress.Street);
+        result.ShouldHaveValidationErrorFor(x => x.OriginAddress.PostalCode);
+    }
+
+    [Fact]
+    public void OriginAddress_ValidOriginAddress_ShouldNotHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto
+        {
+            OriginAddress = new AddressDto { City = "Valid City", Street = "Valid Street", PostalCode = "12345" }
+        };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.OriginAddress);
+    }
+
+    #endregion
+
+    #region DestinationAddress
+
+    [Fact]
+    public void DestinationAddress_InvalidDestinationAddress_ShouldHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto { DestinationAddress = new AddressDto() };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.DestinationAddress.City);
+        result.ShouldHaveValidationErrorFor(x => x.DestinationAddress.Street);
+        result.ShouldHaveValidationErrorFor(x => x.DestinationAddress.PostalCode);
+    }
+
+    [Fact]
+    public void DestinationAddress_ValidDestinationAddress_ShouldNotHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto
+        {
+            DestinationAddress =
+                new AddressDto { City = "Valid City", Street = "Valid Street", PostalCode = "12345" }
+        };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.DestinationAddress);
+    }
+
+    #endregion
+
+    #region DeliveryType
+
+    [Fact]
+    public void DeliveryType_InvalidDeliveryType_ShouldHaveValidationError()
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto { DeliveryType = (DeliveryType)999 };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.DeliveryType)
+            .WithErrorMessage("Invalid delivery type.");
+    }
+
+    [Theory]
+    [InlineData(DeliveryType.Standard)]
+    [InlineData(DeliveryType.Express)]
+    public void DeliveryType_ValidDeliveryType_ShouldNotHaveValidationError(DeliveryType deliveryType)
+    {
+        // Arrange
+        var dto = new CreatePackageV2Dto { DeliveryType = deliveryType };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.DeliveryType);
+    }
+
+    #endregion
+}

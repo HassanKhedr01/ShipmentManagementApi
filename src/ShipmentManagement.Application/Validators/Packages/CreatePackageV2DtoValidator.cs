@@ -15,7 +15,7 @@ public class CreatePackageV2DtoValidator : AbstractValidator<CreatePackageV2Dto>
             .SetValidator(addressValidator);
         RuleFor(x => x.DestinationAddress).NotNull().WithMessage("Destination address is required.")
             .SetValidator(addressValidator);
-        RuleFor(x => x.DeliveryType).NotEmpty().WithMessage("Delivery type is required.").IsInEnum()
+        RuleFor(x => x.DeliveryType).IsInEnum()
             .WithMessage("Invalid delivery type.");
     }
 }
