@@ -1,6 +1,8 @@
 using System.Security.Claims;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+
 using ShipmentManagement.Application.DTOs.Auth;
 using ShipmentManagement.Application.Interfaces;
 using ShipmentManagement.Domain.Entities;
@@ -18,7 +20,8 @@ public class AuthService : IAuthService
     private readonly JwtOptions _jwtOptions;
 
     public AuthService(UserManager<ApplicationUser> userManager, IRefreshTokenService refreshTokenService,
-        IJwtService jwtService, IOptions<JwtOptions> jwtOptions, RoleManager<ApplicationRole> roleManager, TimeProvider timeProvider)
+        IJwtService jwtService, IOptions<JwtOptions> jwtOptions, RoleManager<ApplicationRole> roleManager,
+        TimeProvider timeProvider)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -33,11 +36,7 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user != null) return new AuthResultDto { Success = false, Errors = ["Invalid Email or Password."] };
 
-        user = new ApplicationUser
-        {
-            UserName = dto.UserName,
-            Email = dto.Email
-        };
+        user = new ApplicationUser { UserName = dto.UserName, Email = dto.Email };
 
         var registerResult = await _userManager.CreateAsync(user, dto.Password);
         if (!registerResult.Succeeded)
@@ -64,13 +63,7 @@ public class AuthService : IAuthService
         if (!passwordResult) return null;
 
         var userRoles = await _userManager.GetRolesAsync(user);
-        var jwtUser = new JwtUserDto
-        {
-            Id = user.Id,
-            Name = user.UserName!,
-            Email = user.Email!,
-            Roles = userRoles
-        };
+        var jwtUser = new JwtUserDto { Id = user.Id, Name = user.UserName!, Email = user.Email!, Roles = userRoles };
 
         var accessToken = _jwtService.GenerateAccessToken(jwtUser);
         var refreshToken = _refreshTokenService.GenerateRefreshToken();
@@ -99,8 +92,8 @@ public class AuthService : IAuthService
         if (storedToken == null) return false;
         if (storedToken.RevokedAt is not null) return false;
 
-        await _refreshTokenService.RevokeRefreshTokenAsync(storedToken);
-        return true;
+        var revoked = await _refreshTokenService.RevokeRefreshTokenAsync(storedToken);
+        return revoked;
     }
 
     public async Task<TokenResponseDto?> RefreshAsync(RefreshRequestDto dto)
@@ -110,9 +103,9 @@ public class AuthService : IAuthService
 
         var userIdString = principle.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (!Guid.TryParse(userIdString, out var userId)) return null;
-        
+
         var tokenHash = _refreshTokenService.HashRefreshToken(dto.RefreshToken);
-        var storedToken = await _refreshTokenService.GetRefreshTokenWithUserIdAsync(userId,tokenHash);
+        var storedToken = await _refreshTokenService.GetRefreshTokenWithUserIdAsync(userId, tokenHash);
 
         var currentUtc = _timeProvider.GetUtcNow().UtcDateTime;
         if (storedToken is not { RevokedAt: null } || storedToken.ExpiresAt <= currentUtc)
@@ -126,13 +119,7 @@ public class AuthService : IAuthService
         if (user == null) return null;
 
         var userRoles = await _userManager.GetRolesAsync(user);
-        var jwtUser = new JwtUserDto
-        {
-            Id = user.Id,
-            Name = user.UserName!,
-            Email = user.Email!,
-            Roles = userRoles
-        };
+        var jwtUser = new JwtUserDto { Id = user.Id, Name = user.UserName!, Email = user.Email!, Roles = userRoles };
 
         var accessToken = _jwtService.GenerateAccessToken(jwtUser);
         var newRefreshToken = _refreshTokenService.GenerateRefreshToken();
