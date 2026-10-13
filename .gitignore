@@ -5,6 +5,7 @@
 [Oo]bj/
 
 **/appsettings.Development.json
+**/appsettings.Testing.json
 **/Properties/launchSettings.json
 **/ShipmentManagement.Api.http
 
