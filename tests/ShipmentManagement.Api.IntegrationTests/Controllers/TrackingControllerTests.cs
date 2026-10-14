@@ -2,7 +2,7 @@ using System.Net;
 
 using ShipmentManagement.Api.IntegrationTests.TestHost;
 
-namespace ShipmentManagement.Api.IntegrationTests.Tracking;
+namespace ShipmentManagement.Api.IntegrationTests.Controllers;
 
 public class TrackingEndpointTests
 {
