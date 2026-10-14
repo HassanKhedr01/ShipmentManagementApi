@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
+using ShipmentManagement.Api.IntegrationTests.TestData;
 using ShipmentManagement.Infrastructure.Persistence;
 
 namespace ShipmentManagement.Api.IntegrationTests.TestHost;
@@ -38,6 +39,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         using var scope = host.Services.CreateScope();
         var context = host.Services.GetRequiredService<AppDbContext>();
         context.Database.EnsureCreated();
+        DatabaseSeeder.SeedIdentityAsync(scope.ServiceProvider).GetAwaiter().GetResult();
+        DatabaseSeeder.SeedApplicationAsync(context).GetAwaiter().GetResult();
         return host;
     }
 
