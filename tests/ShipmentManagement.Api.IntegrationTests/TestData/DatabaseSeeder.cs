@@ -225,8 +225,8 @@ public static class DatabaseSeeder
                 Status = Status.Created,
                 Description = "Shipment registered",
                 OccuredAt = new DateTime(2026, 10, 1, 9, 0, 0),
-                FacilityId = 1,
-                FacilityName = "Cairo Central Hub"
+                FacilityId = null,
+                FacilityName = null
             },
             new()
             {
@@ -247,8 +247,8 @@ public static class DatabaseSeeder
                 Status = Status.Created,
                 Description = "Shipment registered",
                 OccuredAt = new DateTime(2026, 10, 10, 10, 30, 0),
-                FacilityId = 1,
-                FacilityName = "Cairo Central Hub"
+                FacilityId = null,
+                FacilityName = null
             },
             new()
             {
@@ -258,8 +258,8 @@ public static class DatabaseSeeder
                 Status = Status.Created,
                 Description = "Shipment registered",
                 OccuredAt = new DateTime(2026, 10, 12, 8, 0, 0),
-                FacilityId = 4,
-                FacilityName = "Giza Logistics Center"
+                FacilityId = null,
+                FacilityName = null
             },
             new()
             {
@@ -280,8 +280,8 @@ public static class DatabaseSeeder
                 Status = Status.Created,
                 Description = "Shipment registered",
                 OccuredAt = new DateTime(2026, 10, 11, 11, 0, 0),
-                FacilityId = 4,
-                FacilityName = "Giza Logistics Center"
+                FacilityId = null,
+                FacilityName = null
             },
             new()
             {
@@ -291,8 +291,8 @@ public static class DatabaseSeeder
                 Status = Status.Created,
                 Description = "Shipment registered",
                 OccuredAt = new DateTime(2026, 10, 13, 7, 45, 0),
-                FacilityId = 2,
-                FacilityName = "Alexandria Distribution Center"
+                FacilityId = null,
+                FacilityName = null
             },
             new()
             {
@@ -313,8 +313,8 @@ public static class DatabaseSeeder
                 Status = Status.Created,
                 Description = "Shipment registered",
                 OccuredAt = new DateTime(2026, 10, 8, 14, 0, 0),
-                FacilityId = 1,
-                FacilityName = "Cairo Central Hub"
+                FacilityId = null,
+                FacilityName = null
             }
         };
 
