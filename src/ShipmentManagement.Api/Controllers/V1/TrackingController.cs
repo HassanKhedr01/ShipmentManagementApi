@@ -28,7 +28,7 @@ public class TrackingController : ControllerBase
     /// <response code="200">The package information was successfully retrieved.</response>
     /// <response code="400">The tracking number is invalid.</response>
     /// <response code="404">The package was not found.</response>
-    [HttpGet("{trackingNumber}")]
+    [HttpGet("{trackingNumber?}")]
     [ProducesResponseType(typeof(PublicPackageInfo), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -68,7 +68,7 @@ public class TrackingController : ControllerBase
     [ProducesResponseType(typeof(List<PublicTrackingEvent>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<PublicTrackingEvent>>> GetPackageEvents(string? trackingNumber)
+    public async Task<ActionResult<List<PublicTrackingEvent>>> GetPackageEvents(string trackingNumber)
     {
         if (string.IsNullOrEmpty(trackingNumber) || trackingNumber.Length != 12)
         {
