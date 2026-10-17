@@ -28,8 +28,4 @@
       <ProjectReference Include="..\..\src\ShipmentManagement.Api\ShipmentManagement.Api.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Tracking\" />
-    </ItemGroup>
-
 </Project>

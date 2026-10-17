@@ -11,10 +11,7 @@ namespace ShipmentManagement.Api.IntegrationTests.TestData;
 
 public static class DatabaseSeeder
 {
-    private static Guid UserId { get; set; }
-    private static Guid AdminId { get; set; }
-
-    public static async Task SeedIdentityAsync(IServiceProvider services)
+    public static async Task<SeededUsers> SeedIdentityAsync(IServiceProvider services)
     {
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
@@ -31,9 +28,9 @@ public static class DatabaseSeeder
         }
 
         const string userEmail = "testuser@example.com";
-        const string userPassword = "UserPassword123!";
+        const string userPassword = "UserPassword123";
         const string adminEmail = "testadmin@example.com";
-        const string adminPassword = "AdminPassword123!";
+        const string adminPassword = "AdminPassword123";
 
         var user = await userManager.FindByEmailAsync(userEmail);
         var admin = await userManager.FindByEmailAsync(adminEmail);
@@ -41,17 +38,15 @@ public static class DatabaseSeeder
         if (user is null)
         {
             user = new ApplicationUser { UserName = userEmail, Email = userEmail };
-            var userResult = await userManager.CreateAsync(user, userPassword);
-            EnsureSucceeded(userResult);
-            UserId = user.Id;
+            var result = await userManager.CreateAsync(user, userPassword);
+            EnsureSucceeded(result);
         }
 
         if (admin is null)
         {
             admin = new ApplicationUser { UserName = adminEmail, Email = adminEmail };
-            var userResult = await userManager.CreateAsync(admin, adminPassword);
-            EnsureSucceeded(userResult);
-            AdminId = admin.Id;
+            var result = await userManager.CreateAsync(admin, adminPassword);
+            EnsureSucceeded(result);
         }
 
         if (!await userManager.IsInRoleAsync(user, "User"))
@@ -65,9 +60,12 @@ public static class DatabaseSeeder
             var roleResult = await userManager.AddToRoleAsync(admin, "Admin");
             EnsureSucceeded(roleResult);
         }
+
+        return new SeededUsers(user.Id, admin.Id);
     }
 
-    public static async Task SeedApplicationAsync(AppDbContext context, CancellationToken cancellationToken = default)
+    public static async Task SeedApplicationAsync(AppDbContext context, SeededUsers users,
+        CancellationToken cancellationToken = default)
     {
         var facilities = new List<Facility>
         {
@@ -126,7 +124,7 @@ public static class DatabaseSeeder
                 DeliveryType = DeliveryType.Standard,
                 CreatedAt = new DateTime(2026, 10, 1, 9, 0, 0),
                 EstimatedDeliveryDate = new DateTime(2026, 10, 4),
-                ApplicationUserId = UserId,
+                ApplicationUserId = users.UserId,
                 OriginAddress = new Address { Street = "Tahrir Street", City = "Cairo", PostalCode = "11511" },
                 DestinationAddress = new Address { Street = "Corniche Road", City = "Alexandria", PostalCode = "21500" }
             },
@@ -141,7 +139,7 @@ public static class DatabaseSeeder
                 DeliveryType = DeliveryType.Express,
                 CreatedAt = new DateTime(2026, 10, 10, 10, 30, 0),
                 EstimatedDeliveryDate = new DateTime(2026, 10, 11),
-                ApplicationUserId = UserId,
+                ApplicationUserId = users.UserId,
                 OriginAddress = new Address { Street = "El Nasr Street", City = "Cairo", PostalCode = "11765" },
                 DestinationAddress =
                     new Address { Street = "El Gomhoria Street", City = "Mansoura", PostalCode = "35511" }
@@ -157,7 +155,7 @@ public static class DatabaseSeeder
                 DeliveryType = DeliveryType.Standard,
                 CreatedAt = new DateTime(2026, 10, 12, 8, 0, 0),
                 EstimatedDeliveryDate = new DateTime(2026, 10, 15),
-                ApplicationUserId = UserId,
+                ApplicationUserId = users.UserId,
                 OriginAddress = new Address { Street = "Industrial Zone", City = "Giza", PostalCode = "12511" },
                 DestinationAddress = new Address { Street = "El Bahr Street", City = "Mansoura", PostalCode = "35516" }
             },
@@ -172,7 +170,7 @@ public static class DatabaseSeeder
                 DeliveryType = DeliveryType.Express,
                 CreatedAt = new DateTime(2026, 10, 11, 11, 0, 0),
                 EstimatedDeliveryDate = new DateTime(2026, 10, 12),
-                ApplicationUserId = AdminId,
+                ApplicationUserId = users.AdminId,
                 OriginAddress = new Address { Street = "Dokki Street", City = "Giza", PostalCode = "12611" },
                 DestinationAddress =
                     new Address { Street = "Corniche El Nile", City = "Aswan", PostalCode = "81511" }
@@ -188,7 +186,7 @@ public static class DatabaseSeeder
                 DeliveryType = DeliveryType.Standard,
                 CreatedAt = new DateTime(2026, 10, 13, 7, 45, 0),
                 EstimatedDeliveryDate = new DateTime(2026, 10, 16),
-                ApplicationUserId = AdminId,
+                ApplicationUserId = users.AdminId,
                 OriginAddress =
                     new Address { Street = "Saad Zaghloul Street", City = "Alexandria", PostalCode = "21525" },
                 DestinationAddress =
@@ -205,7 +203,7 @@ public static class DatabaseSeeder
                 DeliveryType = DeliveryType.Standard,
                 CreatedAt = new DateTime(2026, 10, 8, 14, 0, 0),
                 EstimatedDeliveryDate = new DateTime(2026, 10, 11),
-                ApplicationUserId = AdminId,
+                ApplicationUserId = users.AdminId,
                 OriginAddress =
                     new Address { Street = "Abbas El Akkad Street", City = "Cairo", PostalCode = "11765" },
                 DestinationAddress = new Address
@@ -323,7 +321,7 @@ public static class DatabaseSeeder
             new()
             {
                 Id = 1,
-                ApplicationUserId = UserId,
+                ApplicationUserId = users.UserId,
                 TokenHash = "sample-token-hash-001",
                 CreatedAt = new DateTime(2026, 10, 10, 9, 0, 0),
                 ExpiresAt = new DateTime(2026, 10, 17, 9, 0, 0),
@@ -332,7 +330,7 @@ public static class DatabaseSeeder
             new()
             {
                 Id = 2,
-                ApplicationUserId = UserId,
+                ApplicationUserId = users.UserId,
                 TokenHash = "sample-token-hash-002",
                 CreatedAt = new DateTime(2026, 10, 5, 9, 0, 0),
                 ExpiresAt = new DateTime(2026, 10, 12, 9, 0, 0),
@@ -341,7 +339,7 @@ public static class DatabaseSeeder
             new()
             {
                 Id = 3,
-                ApplicationUserId = AdminId,
+                ApplicationUserId = users.AdminId,
                 TokenHash = "sample-token-hash-003",
                 CreatedAt = new DateTime(2026, 10, 5, 9, 0, 0),
                 ExpiresAt = new DateTime(2026, 10, 12, 9, 0, 0),
@@ -353,7 +351,7 @@ public static class DatabaseSeeder
         await context.Facilities.AddRangeAsync(facilities, cancellationToken);
         await context.TrackingEvents.AddRangeAsync(trackingEvents, cancellationToken);
         await context.RefreshTokens.AddRangeAsync(refreshTokens, cancellationToken);
-        
+
         await context.SaveChangesAsync(cancellationToken);
     }
 

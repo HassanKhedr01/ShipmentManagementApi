@@ -37,10 +37,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         var host = base.CreateHost(builder);
         using var scope = host.Services.CreateScope();
-        var context = host.Services.GetRequiredService<AppDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         context.Database.EnsureCreated();
-        DatabaseSeeder.SeedIdentityAsync(scope.ServiceProvider).GetAwaiter().GetResult();
-        DatabaseSeeder.SeedApplicationAsync(context).GetAwaiter().GetResult();
+        var seededUsers = DatabaseSeeder.SeedIdentityAsync(scope.ServiceProvider).GetAwaiter().GetResult();
+        DatabaseSeeder.SeedApplicationAsync(context, seededUsers).GetAwaiter().GetResult();
         return host;
     }
 
