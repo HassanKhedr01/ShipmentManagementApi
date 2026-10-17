@@ -170,7 +170,7 @@ public static class DatabaseSeeder
                 DeliveryType = DeliveryType.Express,
                 CreatedAt = new DateTime(2026, 10, 11, 11, 0, 0),
                 EstimatedDeliveryDate = new DateTime(2026, 10, 12),
-                ApplicationUserId = users.AdminId,
+                ApplicationUserId = users.UserId,
                 OriginAddress = new Address { Street = "Dokki Street", City = "Giza", PostalCode = "12611" },
                 DestinationAddress =
                     new Address { Street = "Corniche El Nile", City = "Aswan", PostalCode = "81511" }

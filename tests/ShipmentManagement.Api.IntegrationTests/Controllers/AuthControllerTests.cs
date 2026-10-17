@@ -331,6 +331,20 @@ public class AuthControllerTests
     #region Logout
 
     [Fact]
+    public async Task Logout_RequestWhileNonAuthenticated_ReturnsUnauthorized()
+    {
+        // Arrange
+        using var factory = new CustomWebApplicationFactory();
+        using var client = factory.CreateClient();
+        
+        // Act
+        var response = await client.PostAsJsonAsync("api/v1.0/Auth/logout", new LogoutRequestDto());
+        
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+    
+    [Fact]
     public async Task Logout_ValidLogoutRequest_ReturnsNoContent()
     {
         // Arrange
