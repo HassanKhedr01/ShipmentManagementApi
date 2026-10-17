@@ -15,7 +15,7 @@
             </summary>
             <param name="requestDto">The registration request details</param>
             <returns></returns>
-            <response code="201">User registered successfully</response>
+            <response code="200">User registered successfully</response>
             <response code="400">Invalid registration request</response>
         </member>
         <member name="M:ShipmentManagement.Api.Controllers.V1.AuthController.Login(ShipmentManagement.Application.DTOs.Auth.LoginRequestDto)">

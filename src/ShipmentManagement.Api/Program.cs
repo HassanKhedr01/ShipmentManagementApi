@@ -11,7 +11,7 @@ public class Program
     public static void Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console().CreateBootstrapLogger();
+            .WriteTo.Console().CreateLogger();
         try
         {
             Log.Information("Starting application..");

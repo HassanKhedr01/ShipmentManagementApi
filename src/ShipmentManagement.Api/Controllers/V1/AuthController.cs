@@ -36,11 +36,11 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="requestDto">The registration request details</param>
     /// <returns></returns>
-    /// <response code="201">User registered successfully</response>
+    /// <response code="200">User registered successfully</response>
     /// <response code="400">Invalid registration request</response>
     [AnonymousOnly]
     [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto requestDto)
     {
