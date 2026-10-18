@@ -217,7 +217,7 @@ public static class DatabaseSeeder
                 RecipientName = "Admin Recipient",
                 TrackingNumber = "PKG-7W8X9Y0Z",
                 CurrentStatus = Status.Delivered,
-                DeliveryType = DeliveryType.Standard,
+                DeliveryType = DeliveryType.Express,
                 CreatedAt = new DateTime(2026, 10, 14, 8, 0, 0),
                 EstimatedDeliveryDate = new DateTime(2026, 10, 17),
                 ApplicationUserId = users.AdminId,

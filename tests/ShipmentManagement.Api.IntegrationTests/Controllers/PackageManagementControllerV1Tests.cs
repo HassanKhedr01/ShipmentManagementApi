@@ -21,7 +21,7 @@ using ShipmentManagement.Infrastructure.Persistence;
 
 namespace ShipmentManagement.Api.IntegrationTests.Controllers;
 
-public class PackageManagementControllerTests
+public class PackageManagementControllerV1Tests
 {
     private readonly JsonSerializerOptions _jsonOptions = new(JsonSerializerDefaults.Web)
     {
