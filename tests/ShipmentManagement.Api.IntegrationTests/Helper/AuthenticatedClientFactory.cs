@@ -8,11 +8,14 @@ namespace ShipmentManagement.Api.IntegrationTests.Helper;
 
 public static class AuthenticatedClientFactory
 {
-    public static async Task<HttpClient> CreateAsync(CustomWebApplicationFactory factory)
+    public static async Task<HttpClient> CreateAsync(CustomWebApplicationFactory factory, bool isAdmin = false)
     {
         var client = factory.CreateClient();
 
-        var loginRequest = new LoginRequestDto { Email = "testuser@example.com", Password = "UserPassword123" };
+        LoginRequestDto loginRequest = isAdmin
+            ? new LoginRequestDto { Email = "testadmin@example.com", Password = "AdminPassword123" }
+            : new LoginRequestDto { Email = "testuser@example.com", Password = "UserPassword123" };
+
         var loginResponse = await client.PostAsJsonAsync("/api/v1/auth/login", loginRequest);
 
         loginResponse.EnsureSuccessStatusCode();
@@ -33,17 +36,16 @@ public static class AuthenticatedClientFactory
     public static async Task<HttpClient> RegisterAndCreateAsync(CustomWebApplicationFactory factory)
     {
         var client = factory.CreateClient();
-
         var registerRequest = new RegisterRequestDto
-        {
-            UserName = "newtestuser@example.com",
-            Email = "newtestuser@example.com",
-            Password = "new123456",
-            ConfirmPassword = "new123456"
-        };
+            {
+                UserName = "newtestuser@example.com",
+                Email = "newtestuser@example.com",
+                Password = "new123456",
+                ConfirmPassword = "new123456"
+            };
         var registerResponse = await client.PostAsJsonAsync("api/v1.0/Auth/register", registerRequest);
         registerResponse.EnsureSuccessStatusCode();
-        
+
         var loginRequest = new LoginRequestDto { Email = "newtestuser@example.com", Password = "new123456" };
         var loginResponse = await client.PostAsJsonAsync("/api/v1/auth/login", loginRequest);
 

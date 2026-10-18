@@ -199,16 +199,32 @@ public static class DatabaseSeeder
                 SenderName = "Tech Solutions",
                 RecipientName = "Youssef Samir",
                 TrackingNumber = "PKG-5S6T7U8V",
-                CurrentStatus = Status.Created,
+                CurrentStatus = Status.OutForDelivery,
                 DeliveryType = DeliveryType.Standard,
                 CreatedAt = new DateTime(2026, 10, 8, 14, 0, 0),
                 EstimatedDeliveryDate = new DateTime(2026, 10, 11),
                 ApplicationUserId = users.AdminId,
                 OriginAddress =
                     new Address { Street = "Abbas El Akkad Street", City = "Cairo", PostalCode = "11765" },
+                DestinationAddress =
+                    new Address { Street = "El Horreya Street", City = "Alexandria", PostalCode = "21526" }
+            },
+            new()
+            {
+                Id = 7,
+                Name = "Admin Delivered Shipment",
+                SenderName = "Admin Sender",
+                RecipientName = "Admin Recipient",
+                TrackingNumber = "PKG-7W8X9Y0Z",
+                CurrentStatus = Status.Delivered,
+                DeliveryType = DeliveryType.Standard,
+                CreatedAt = new DateTime(2026, 10, 14, 8, 0, 0),
+                EstimatedDeliveryDate = new DateTime(2026, 10, 17),
+                ApplicationUserId = users.AdminId,
+                OriginAddress = new Address { Street = "Tahrir Street", City = "Cairo", PostalCode = "11511" },
                 DestinationAddress = new Address
                 {
-                    Street = "El Horreya Street", City = "Alexandria", PostalCode = "21526"
+                    Street = "Corniche Road", City = "Alexandria", PostalCode = "21500"
                 }
             }
         };
@@ -313,8 +329,101 @@ public static class DatabaseSeeder
                 OccuredAt = new DateTime(2026, 10, 8, 14, 0, 0),
                 FacilityId = null,
                 FacilityName = null
+            },
+            new()
+            {
+                Id = 10,
+                PackageId = 7,
+                PackageName = "Admin Delivered Shipment",
+                Status = Status.Created,
+                Description = "Shipment registered",
+                OccuredAt = new DateTime(2026, 10, 14, 8, 0, 0)
+            },
+            new()
+            {
+                Id = 11,
+                PackageId = 7,
+                PackageName = "Admin Delivered Shipment",
+                Status = Status.PickedUp,
+                Description = "Package picked up from the sender",
+                OccuredAt = new DateTime(2026, 10, 14, 9, 0, 0),
+                FacilityId = 1,
+                FacilityName = "Cairo Central Hub"
+            },
+            new()
+            {
+                Id = 12,
+                PackageId = 7,
+                PackageName = "Admin Delivered Shipment",
+                Status = Status.InTransit,
+                Description = "Package is in transit",
+                OccuredAt = new DateTime(2026, 10, 14, 12, 0, 0)
+            },
+            new()
+            {
+                Id = 13,
+                PackageId = 7,
+                PackageName = "Admin Delivered Shipment",
+                Status = Status.OutForDelivery,
+                Description = "Package is out for delivery",
+                OccuredAt = new DateTime(2026, 10, 15, 8, 0, 0),
+                FacilityId = 2,
+                FacilityName = "Alexandria Distribution Center"
+            },
+            new()
+            {
+                Id = 14,
+                PackageId = 7,
+                PackageName = "Admin Delivered Shipment",
+                Status = Status.Delayed,
+                Description = "Recipient unavailable during the first delivery attempt",
+                OccuredAt = new DateTime(2026, 10, 15, 14, 0, 0),
+                FacilityId = 2,
+                FacilityName = "Alexandria Distribution Center"
+            },
+            new()
+            {
+                Id = 15,
+                PackageId = 7,
+                PackageName = "Admin Delivered Shipment",
+                Status = Status.OutForDelivery,
+                Description = "Package is out for delivery again",
+                OccuredAt = new DateTime(2026, 10, 16, 8, 0, 0),
+                FacilityId = 2,
+                FacilityName = "Alexandria Distribution Center"
+            },
+            new()
+            {
+                Id = 16,
+                PackageId = 7,
+                PackageName = "Admin Delivered Shipment",
+                Status = Status.Delivered,
+                Description = "Package delivered successfully",
+                OccuredAt = new DateTime(2026, 10, 16, 11, 0, 0)
             }
         };
+        
+        var deliveryAttempts = new List<DeliveryAttempt>
+        {
+            new()
+            {
+                Id = 1,
+                PackageId = 7,
+                AttemptedAt = new DateTime(2026, 10, 15, 14, 0, 0),
+                DeliveryResult = Result.Failed,
+                FailureReason = "Recipient unavailable"
+            },
+            new()
+            {
+                Id = 2,
+                PackageId = 7,
+                AttemptedAt = new DateTime(2026, 10, 16, 11, 0, 0),
+                DeliveryResult = Result.Successful
+            }
+        };
+
+        await context.DeliveryAttempts.AddRangeAsync(
+            deliveryAttempts, cancellationToken);
 
         var refreshTokens = new List<RefreshToken>
         {
@@ -350,6 +459,7 @@ public static class DatabaseSeeder
         await context.Packages.AddRangeAsync(packages, cancellationToken);
         await context.Facilities.AddRangeAsync(facilities, cancellationToken);
         await context.TrackingEvents.AddRangeAsync(trackingEvents, cancellationToken);
+        await context.DeliveryAttempts.AddRangeAsync(deliveryAttempts, cancellationToken);
         await context.RefreshTokens.AddRangeAsync(refreshTokens, cancellationToken);
 
         await context.SaveChangesAsync(cancellationToken);
